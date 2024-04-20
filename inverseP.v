@@ -1,6 +1,7 @@
 /*********************
 Inverse of P circuit
-
+Inverse of point P
+on Elliptic curve
 *********************/
 module inverseP(
         input x,

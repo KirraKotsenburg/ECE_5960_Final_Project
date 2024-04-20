@@ -3,7 +3,7 @@
 Takes in two 4-bit inputs, performs bitwise
 XOR on them (addition), and outputs the sum as 4-bit Z
 *********************/
-module 4b_ADD(
+module fourbit_ADD(
     input [3:0] A,
     input [3:0] B,
     output reg [3:0] Z

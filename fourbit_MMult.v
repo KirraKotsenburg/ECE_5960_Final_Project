@@ -3,7 +3,7 @@
 Takes in two 4-bit inputs, multiplies
 them, and outputs the product as 4-bit Z
 *********************/
-module 4b_MMult(
+module fourbit_MMult(
     input [3:0]A,
     input [3:0] B,
     output reg[3:0] Z

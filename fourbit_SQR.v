@@ -3,7 +3,7 @@
 Takes in one 4-bit input, squares
 it, and outputs the product as 4-bit Z
 *********************/
-module 4b_SQR(
+module fourbit_SQR(
     input [3:0]A,
     output reg[3:0] Z
     );
