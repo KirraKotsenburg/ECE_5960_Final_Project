@@ -1,0 +1,180 @@
+
+
+
+ring ri = (2, A), (y, x), lp;
+minpoly = A^4 + A + 1;
+
+poly a = A^2;
+poly b = 1;
+
+poly E = y^2 + x*y + x^3 + a*x^2 + b;
+//poly LD = y^2 + x*y*z + x^3*z + a*x^2*z^2 + b*z^4;
+
+proc pointDouble(list P) {
+  list R;
+
+  R[3] = P[3]^2 * P[1]^2;
+  R[1] = P[1]^4 + b * P[3]^4;
+  R[2] = b * P[3]^4 * R[3] +  R[1] * (a * R[3] + P[2]^2 + b * P[3]^4);
+
+  return(R); 
+}
+
+proc pointAdd(list P, list Q) {
+  list R;
+  poly A0, A1, B0, B1, A, B, C, D, E, F, G, H, I, J;
+
+  if(Q[3] == 1) {
+    A = Q[2] * P[3]^2 + P[2];
+    B = Q[1] * P[3] + P[1];
+    C = P[3] * B;
+    D = B^2 * (C + a * P[3]^2);
+    R[3] = C^2;
+    E = A * C;
+    R[1] = A^2 + D + E;
+    F = R[1] + Q[1] * R[3];
+    G = R[1] + Q[2] * R[3];
+    R[2] = E * F + R[3] * G;
+  }
+  else {
+    A0 = Q[2] * P[3]^2;
+    A1 = P[2] * Q[3]^2;
+    B0 = Q[1] * P[3];
+    B1 = P[1] * Q[3];
+    C = A0 + A1;
+    D = B0 + B1;
+    E = P[3] * Q[3];
+    F = D * E;
+    R[3] = F^2;
+    G = D^2 * (F + a*E^2);
+    H = C * F;
+    R[1] = C^2 + H + G;
+    I = D^2 * B0 * E + R[1];
+    J = D^2 * A0 + R[1];
+    R[2] = H * I + R[3] * J;
+  }
+  return(R);
+}
+
+proc normalize(list P) {
+  list R;
+  if(P[3] == 0) {
+    return(P);
+  }
+
+  R[1] = P[1] / P[3];
+  R[2] = P[2] / P[3]^2;
+  
+  return(R);
+}
+
+poly f0 = 0;
+poly f1 = 1;
+poly fa1 = A;
+poly fa2 = A^2;
+poly fa3 = A^3;
+poly fa4 = A^4;
+poly fa5 = A^5;
+poly fa6 = A^6;
+poly fa7 = A^7;
+poly fa8 = A^8;
+poly fa9 = A^9;
+poly fa10 = A^10;
+poly fa11 = A^11;
+poly fa12 = A^12;
+poly fa13 = A^13;
+poly fa14 = A^14;
+
+printf("List of polynomials:");
+printf("polynomial 0: %s", f0);
+printf("polynomial 1: %s", f1);
+printf("polynomial A: %s", fa1);
+printf("polynomial A^2: %s", fa2);
+printf("polynomial A^3: %s", fa3);
+printf("polynomial A^4: %s", fa4);
+printf("polynomial A^5: %s", fa5);
+printf("polynomial A^6: %s", fa6);
+printf("polynomial A^7: %s", fa7);
+printf("polynomial A^8: %s", fa8);
+printf("polynomial A^9: %s", fa9);
+printf("polynomial A^10: %s", fa10);
+printf("polynomial A^11: %s", fa11);
+printf("polynomial A^12: %s", fa12);
+printf("polynomial A^13: %s", fa13);
+printf("polynomial A^14: %s", fa14);
+
+
+int i;
+poly f;
+printf("when i = %s", 0);
+// Substitute x = 0 in E
+f = subst(E, x, 0);
+printf("poly f is:");
+f;
+printf("poly f factorizes as follows:");
+factorize(f);
+"================================";
+// 0 = special element, now we generate the remaining elements
+for(i=1; i<16; i = i+1){
+  printf("when x = %s", A^i);
+  f = subst(E, x, A^i);
+  printf("poly f after substitution of x = %s:", A^i);
+  f;
+  printf("poly f factorizes as:");
+  factorize(f);
+  "================================";
+}
+
+"Points are:";
+"(0, 1)       (0, 1)";
+"(a^3, a^4)   (a^3, a^7)";
+"(a^5, a^4)   (a^5, a^8)";
+"(a^6, 0)     (a^6, a^6)";
+"(a^9, a^4)   (a^9, a^14)";
+"(a^10, a^9)  (a^10, a^13)";
+"(a^12, a^5)  (a^12, a^14)";
+"(1, a^3)     (1, a^14)";
+
+"LD projective points are:";
+"(0, 1, 1)       (0, 1, 1)";
+"(a^3, a^4, 1)   (a^3, a^7, 1)";
+"(a^5, a^4, 1)   (a^5, a^8, 1)";
+"(a^6, 0, 1)     (a^6, a^6, 1)";
+"(a^9, a^4, 1)   (a^9, a^14, 1)";
+"(a^10, a^9, 1)  (a^10, a^13, 1)";
+"(a^12, a^5, 1)  (a^12, a^14, 1)";
+"(1, a^3, 1)     (1, a^14, 1)";
+
+
+
+number x1, y1, z1;
+int j;
+list P;
+list Q;
+list N, T;
+
+x1 = A^3;
+y1 = A^4;
+z1 = 1;
+printf("Generator is point P");
+P = x1, y1, z1;
+printf("P = (%s, %s, %s)", P[1], P[2], P[3]);
+
+Q = pointDouble(P);
+N = normalize(Q);
+printf("2P = (%s, %s, %s)", Q[1], Q[2], Q[3]);
+printf("2P normal = (%s, %s)", N[1], N[2]);
+T = Q;
+
+for(j = 3; j<32; j = j+1){
+  Q = pointAdd(P,Q);
+  N = normalize(Q);
+  printf("%sP = (%s, %s, %s)", j, Q[1], Q[2], Q[3]);
+  printf("%sP normal = (%s, %s)", j, N[1], N[2]);
+}
+T = pointDouble(T); // 4P
+T = pointDouble(T); // 8P
+T = pointDouble(T); // 16P
+N = normalize(T);
+printf("16P = (%s, %s, %s)", T[1], T[2], T[3]);
+printf("16P normal = (%s, %s)", N[1], N[2]);
