@@ -4,15 +4,19 @@ Inverse of point P
 on Elliptic curve
 *********************/
 module inverseP(
-        input x,
-        input y,
-        output wire invx,
-        output wire invy
+        input [3:0] X,
+        input [3:0] Y,
+		  input [3:0] Z,
+        output wire [3:0] invX,
+        output wire [3:0] invY,
+		  output wire [3:0] invZ
 );
 
 
-assign invx = x;
-assign invy = x + y;
+assign invX = X;
 
+fourbit_ADD ADD1(.A(X), .B(Y), .Z(invY));
+
+assign invZ = Z;
 
 endmodule

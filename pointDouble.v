@@ -18,7 +18,7 @@ module pointDouble(
 	 assign b = 4'b0001;
 	 
 	 // Connecting wires
-	 wire[3:0] Z1sqr, X1sqr, Y1sqr, Z1quad, X1quad, bZ1quad, aZ2, aZ2Y2, Y2paren, scndhalf, frsthalf;
+	 wire[3:0] Z1sqr, X1sqr, Y1sqr, Z1quad, X1quad, bZ1quad, aZ2, aZ2Y2, Y2paren, scndhalf, frsthalf, aZ2Y1sqr;
 	 
 	 
 	// Z2 block (Z2 = Z1^2 * X1^2)

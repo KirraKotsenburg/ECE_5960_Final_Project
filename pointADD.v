@@ -13,64 +13,76 @@ module pointADD(
 			output wire [3:0] Z2
 );
 
+
 	 // Constants a and b
 	 wire[3:0]a, b;
 	 
 	 // TODO: Assign values to a, b (b != 0, elements of curve/field?)
 	 assign a = 4'b0100;
 	 assign b = 4'b0001; // not used in formulas
+	 
+	 // Connecting Wires
+	 wire [3:0]A0, a0, A1, a1, B0, B1, C, c0, ch, D, E, F, G, g0, g1, g2, g3, H, I, i0, i1, i2, J, j0, y0, y1;
+	 
+	// Point Addition LD
+	 /*** A0 ***/
+	 fourbit_SQR SQR1(.A(Z0), .Z(ao));
+	 fourbit_MMult MULT1(.A(Y1), .B(a0), .Z(A0)); // A0
+	 
+	 /*** A1 ***/
+	 fourbit_SQR SQR2(.A(Z1), .Z(a1));
+	 fourbit_MMult MULT2(.A(Y0), .B(a1), .Z(A1)); // A1
+	 
+	 /*** B0 ***/
+	 fourbit_MMult MULT3(.A(X1), .B(Z0), .Z(B0)); // B0
+	 
+	 /*** B1 ***/
+	 fourbit_MMult MULT4(.A(X0), .B(Z1), .Z(B1)); // B1
+	 
+	 /*** C ***/
+	 fourbit_ADD ADD1(.A(A0), .B(A1), .Z(C)); // C
+	 
+	 /*** D ***/
+	 fourbit_ADD ADD2(.A(B0), .B(B1), .Z(D)); // D
+	 
+	 /*** E ***/
+	 fourbit_MMult MULT5(.A(Z0), .B(Z1), .Z(E)); // E
+	 
+	 /*** F ***/
+	 fourbit_MMult MULT6(.A(D), .B(E), .Z(F)); // F
+	 
+	 /*** Z2 ***/
+	 fourbit_SQR SQR3(.A(F), .Z(Z2)); // Z2
+	 
+	 /*** G ***/
+	 fourbit_SQR SQR4(.A(D), .Z(g0)); // D^2
+	 fourbit_SQR SQR5(.A(E), .Z(g1)); // E^2
+	 fourbit_MMult MULT7(.A(a), .B(g1), .Z(g2)); // aE^2
+	 fourbit_ADD ADD3(.A(F), .B(g2), .Z(g3)); // F + g2
+	 fourbit_MMult MULT8(.A(g0), .B(g3), .Z(G)); // G
+	 
+	 /*** H ***/
+	 fourbit_MMult MULT9(.A(C), .B(F), .Z(H)); // H
+	 
+	 /*** X2 ***/
+	 fourbit_SQR SQR6(.A(C), .Z(c)); // C^2
+	 fourbit_ADD ADD4(.A(c), .B(H), .Z(ch)); // C^2 + H
+	 fourbit_ADD ADD5(.A(ch), .B(G), .Z(X2)); // X2
+	 
+	 /*** I ***/
+	 fourbit_SQR SQR7(.A(D), .Z(i0)); // D^2
+	 fourbit_MMult MULT10(.A(i0), .B(B0), .Z(i1)); // D^2 * B0
+	 fourbit_MMult MULT11(.A(i1), .B(E), .Z(i2)); // D^2 * B0 * E
+	 fourbit_ADD ADD6(.A(i2), .B(X2), .Z(I)); // I
+	 
+	 /*** J ***/
+	 fourbit_MMult MULT12(.A(i0), .B(A0), .Z(j0)); // D^2 * A0
+	 fourbit_ADD ADD7(.A(j0), .B(X2), .Z(J)); // J
+	 
+	 /*** Y2 ***/
+	 fourbit_MMult MULT13(.A(H), .B(I), .Z(y0)); // H * I
+	 fourbit_MMult MULT14(.A(Z2), .B(J), .Z(y1)); // Z2 * J
+	 fourbit_ADD ADD8(.A(y0), .B(y1), .Z(Y2)); // Y2
 
-	 // Connecting wires
-	 wire[3:0] A, a1, a2, Asqr, B, b1, C, D, d1, d2, d3, d4, E, EF, F, f1, Z2G, G, g1, h;
-	 
-	 // A = Y1 * Z0^2 +Y0
-	 fourbit_SQR SQR1(.A(Z0), .Z(a1));
-	 fourbit_MMult MULT1(.A(Y1), .B(a1), .Z(a2));
-	 fourbit_ADD ADD1(.A(a2), .B(Y0), .Z(A));
-	 
-	 // B = X1 *Z0 + X0
-	 fourbit_MMult MULT2(.A(X1), .B(Z0), .Z(b1));
-	 fourbit_ADD ADD2(.A(b1), .B(X0), .Z(B));
-	 
-	 // C = Z0 *B
-	 fourbit_MMult MULT3(.A(Z0), .B(B), .Z(C));
-	 
-	 // D = B^2 * ( C + a*Z0^2)
-	 fourbit_SQR SQR2(.A(B), .Z(d1)); // B^2
-	 fourbit_SQR SQR3(.A(Z0), .Z(d2)); // Z0^2
-	 
-	 fourbit_MMult MULT4(.A(a), .B(d2), .Z(d3)); // a*Z0^2
-	 fourbit_ADD ADD3(.A(C), .B(d3), .Z(d4)); // ( C + a*Z0^2)
-	 
-	 fourbit_MMult MULT5(.A(d1), .B(d4), .Z(C)); // B^2 * ( C + a*Z0^2)
-	 
-	 // Z2 = C^2
-	 fourbit_SQR SQR4(.A(C), .Z(Z2));
-	 
-	 // E = A * C
-	 fourbit_MMult MULT6(.A(A), .B(C), .Z(E));
-	 
-	 
-	 // X2 = A^2 + D + E
-	 fourbit_SQR SQR5(.A(A), .Z(Asqr));
-	 
-	 fourbit_ADD ADD4(.A(Asqr), .B(D), .Z(h));
-	 fourbit_ADD ADD5(.A(h), .B(E), .Z(X2));
-	 
-	 
-	 // F = X2 + X1 * Z2
-	 fourbit_MMult MULT7(.A(X1), .B(Z2), .Z(f1));
-	 fourbit_ADD ADD6(.A(X2), .B(f1), .Z(F));
-	 
-	 // G = X2 + Y1 * Z2
-	 fourbit_MMult MULT8(.A(Y1), .B(Z2), .Z(gi));
-	 fourbit_ADD ADD7(.A(X2), .B(j), .Z(G));
-	 
-	 //Y2 = E * F + Z2 * G
-	 fourbit_MMult MULT9(.A(E), .B(F), .Z(EF));
-	 fourbit_MMult MULT10(.A(Z2), .B(G), .Z(Z2G));
-	 fourbit_ADD ADD8(.A(EF), .B(Z2G), .Z(Y2));
-	 
-	 
 
 endmodule
