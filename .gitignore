@@ -21,9 +21,16 @@
 /simulation
 /synthesis
 
+# include .do files for testbenches
+!simulation/questa/*.do
+
 # Ignore build output
 /build/
 /dist/
 
 # Ignore configuration files with sensitive information
-config.json
+*.json
+
+# Other ignored files
+LDalu_description.txt
+c5_pin_model_dump.txt

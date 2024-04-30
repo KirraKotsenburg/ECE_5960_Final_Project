@@ -38,7 +38,7 @@ module tb_fourbit_MMult;
     #10 A = 4'b0010; B = 4'b0100;
 	 #20;
 	 $display(" Test 1: A = %b, B = %b, Expected Z = 1000, Actual Z = %b", A, B, Z);
-    #10 A = 4'b0000; B = 4'b1111;
+	 #10 A = 4'b0000; B = 4'b1111;
 	 #20;
 	 $display(" Test 2: A = %b, B = %b, Expected Z = 0000, Actual Z = %b", A, B, Z);
 	 #10 A = 4'b0001; B = 4'b0111;

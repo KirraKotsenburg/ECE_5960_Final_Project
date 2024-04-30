@@ -5,4 +5,7 @@ module control (
   control_if.co coif
 );
   
+  always_comb begin 
+    
+  end
 endmodule
