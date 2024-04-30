@@ -1,0 +1,135 @@
+
+ring ri = (2, A), (z, y, x), lp;
+minpoly = A^4 + A + 1;
+
+poly a = A^2;
+poly b = 1;
+
+//poly E = y^2 + x*y + x^3 + a*x^2 + b;
+poly LD = y^2 + x*y*z + x^3*z + a*x^2*z^2 + b*z^4;
+
+
+proc pointDouble(list P) {
+  list R;
+  //check for point at infinity
+  if(P[3] == 0) {
+    return(P);
+  }
+  
+  R[3] = P[3]^2 * P[1]^2;
+  R[1] = P[1]^4 + b * P[3]^4;
+  R[2] = b * P[3]^4 * R[3] +  R[1] * (a * R[3] + P[2]^2 + b * P[3]^4);
+
+  return(R); 
+}
+
+proc pointAdd(list P, list Q) {
+  list R;
+  poly A0, A1, B0, B1, A, B, C, D, E, F, G, H, I, J;
+  //check for point at infinity
+  if(P[3] == 0) {
+    return(Q);
+  }
+
+  if(Q[3] == 0) {
+    return(P);
+  }
+
+  if(P[3] == Q[3] && P[2] == Q[2] && P[1] == Q[1]) {
+    return(pointDouble(P));
+  }
+
+  if(Q[3] == 1) {
+    A = Q[2] * P[3]^2 + P[2];
+    B = Q[1] * P[3] + P[1];
+    C = P[3] * B;
+    D = B^2 * (C + a * P[3]^2);
+    R[3] = C^2;
+    E = A * C;
+    R[1] = A^2 + D + E;
+    F = R[1] + Q[1] * R[3];
+    G = R[1] + Q[2] * R[3];
+    R[2] = E * F + R[3] * G;
+  }
+  else {
+    A0 = Q[2] * P[3]^2;
+    A1 = P[2] * Q[3]^2;
+    B0 = Q[1] * P[3];
+    B1 = P[1] * Q[3];
+    C = A0 + A1;
+    D = B0 + B1;
+    E = P[3] * Q[3];
+    F = D * E;
+    R[3] = F^2;
+    G = D^2 * (F + a*E^2);
+    H = C * F;
+    R[1] = C^2 + H + G;
+    I = D^2 * B0 * E + R[1];
+    J = D^2 * A0 + R[1];
+    R[2] = H * I + R[3] * J;
+  }
+  return(R);
+}
+
+proc nP(list P,  int n) {
+  list R;
+  int i;
+  R = pointDouble(P);
+  for(i=0; i < n-2; i=i+1){
+    R = pointAdd(R, P);
+  }
+  return(R);
+}
+
+proc Pinv(list P) {
+  list R;
+  if(P[3] == 0 && P[2] == 0) {
+    return(P);
+  }
+  R = P[1], P[1] * P[3] + P[2], P[3];
+  return(R);
+}
+
+proc affine(list P) {
+  list R;
+  R = P[1] / P[3], P[2] / P[3]^2;
+  return(R);
+}
+
+number x1, y1, z1;
+
+list e1, e2, C1, C2, P, R, S;
+int d, r;
+
+// set e1
+x1 = A^3;
+y1 = A^4;
+z1 = 1;
+e1 = x1, y1, z1;
+
+printf("e1 = (%s, %s, %s)", e1[1], e1[2], e1[3]);
+// set d and r
+d = 2;
+r = 3;
+e2 = nP(e1, d);
+printf("e2 = (%s, %s, %s)", e2[1], e2[2], e2[3]);
+printf("d = %s", d);
+printf("r = %s", r);
+
+// set plaintext
+x1 = A^5;
+y1 = A^4;
+z1 = 1;
+P = x1, y1, z1;
+printf("Plaintext = (%s, %s, %s)", P[1], P[2], P[3]);
+
+C1 = nP(e1, r);
+printf("C1 = (%s, %s, %s)", C1[1], C1[2], C1[3]);
+
+C2 = pointAdd(P, nP(e2, r));
+printf("C2 = (%s, %s, %s)", C2[1], C2[2], C2[3]);
+
+R = pointAdd(C2, Pinv(nP(C1, d)));
+S = affine(R);
+printf("result = (%s, %s, %s)", R[1], R[2], R[3]);
+printf("affine result = (%s, %s)", S[1], S[2]);

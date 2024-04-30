@@ -1,6 +1,4 @@
 
-
-
 ring ri = (2, A), (y, x), lp;
 minpoly = A^4 + A + 1;
 
@@ -12,7 +10,11 @@ poly E = y^2 + x*y + x^3 + a*x^2 + b;
 
 proc pointDouble(list P) {
   list R;
-
+  //check for point at infinity
+  if(P[3] == 0) {
+    return(P);
+  }
+  
   R[3] = P[3]^2 * P[1]^2;
   R[1] = P[1]^4 + b * P[3]^4;
   R[2] = b * P[3]^4 * R[3] +  R[1] * (a * R[3] + P[2]^2 + b * P[3]^4);
@@ -23,6 +25,18 @@ proc pointDouble(list P) {
 proc pointAdd(list P, list Q) {
   list R;
   poly A0, A1, B0, B1, A, B, C, D, E, F, G, H, I, J;
+  //check for point at infinity
+  if(P[3] == 0) {
+    return(Q);
+  }
+
+  if(Q[3] == 0) {
+    return(P);
+  }
+
+  if(P[3] == Q[3] && P[2] == Q[2] && P[1] == Q[1]) {
+    return(pointDouble(P));
+  }
 
   if(Q[3] == 1) {
     A = Q[2] * P[3]^2 + P[2];
@@ -135,17 +149,15 @@ for(i=1; i<16; i = i+1){
 "(a^12, a^5)  (a^12, a^14)";
 "(1, a^3)     (1, a^14)";
 
-"LD projective points are:";
-"(0, 1, 1)       (0, 1, 1)";
-"(a^3, a^4, 1)   (a^3, a^7, 1)";
-"(a^5, a^4, 1)   (a^5, a^8, 1)";
-"(a^6, 0, 1)     (a^6, a^6, 1)";
-"(a^9, a^4, 1)   (a^9, a^14, 1)";
-"(a^10, a^9, 1)  (a^10, a^13, 1)";
-"(a^12, a^5, 1)  (a^12, a^14, 1)";
-"(1, a^3, 1)     (1, a^14, 1)";
-
-
+//"LD projective points are:";
+//"(0, 1, 1)       (0, 1, 1)";
+//"(a^3, a^4, 1)   (a^3, a^7, 1)";
+//"(a^5, a^4, 1)   (a^5, a^8, 1)";
+//"(a^6, 0, 1)     (a^6, a^6, 1)";
+//"(a^9, a^4, 1)   (a^9, a^14, 1)";
+//"(a^10, a^9, 1)  (a^10, a^13, 1)";
+//"(a^12, a^5, 1)  (a^12, a^14, 1)";
+//"(1, a^3, 1)     (1, a^14, 1)";
 
 number x1, y1, z1;
 int j;
@@ -166,15 +178,10 @@ printf("2P = (%s, %s, %s)", Q[1], Q[2], Q[3]);
 printf("2P normal = (%s, %s)", N[1], N[2]);
 T = Q;
 
-for(j = 3; j<32; j = j+1){
+for(j = 3; j<33; j = j+1) {
   Q = pointAdd(P,Q);
   N = normalize(Q);
   printf("%sP = (%s, %s, %s)", j, Q[1], Q[2], Q[3]);
   printf("%sP normal = (%s, %s)", j, N[1], N[2]);
 }
-T = pointDouble(T); // 4P
-T = pointDouble(T); // 8P
-T = pointDouble(T); // 16P
-N = normalize(T);
-printf("16P = (%s, %s, %s)", T[1], T[2], T[3]);
-printf("16P normal = (%s, %s)", N[1], N[2]);
+
