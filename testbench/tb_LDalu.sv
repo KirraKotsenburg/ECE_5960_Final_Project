@@ -21,6 +21,7 @@ module tb_LDalu ();
   logic[11:0] expected_R;
 
   task check_outputs();
+    @(negedge tb_clk);
     if(R == expected_R) begin
       $info("Correct R during test case %s", tb_test_case);
     end
@@ -68,6 +69,30 @@ module tb_LDalu ();
     setPoint(A, 4'b1000, 4'b0011, 4'b0001); //set A to P
     setPoint(B, 4'h0, 4'h0, 4'h0); //set B to 0
     setPoint(expected_R, 4'b1110, 4'b0010, 4'b1100); //set out to 2P
+    check_outputs();
+    @(posedge tb_clk);
+
+    // Test case 3
+    // test adding point at infinity
+    // P + O = P
+    tb_test_case = 3;
+
+    op = 0;
+    setPoint(A, 4'b1000, 4'b0011, 4'b0001); //P
+    setPoint(B, 4'b0110, 4'b0000, 4'b0000); //O
+    setPoint(expected_R, 4'b1000, 4'b0011, 4'b0001); //P
+    check_outputs();
+    @(posedge tb_clk);
+
+    // Test case 4
+    // test point doubling at infinity
+    // 2O = O
+    tb_test_case = 4;
+
+    op = 1;
+    setPoint(A, 4'b0110, 4'b0000, 4'b0000); //O
+    setPoint(B, 4'h0, 4'h0, 4'h0); //0
+    setPoint(expected_R, 4'b0110, 4'b0000, 4'b0000); //O
     check_outputs();
     @(posedge tb_clk);
   end

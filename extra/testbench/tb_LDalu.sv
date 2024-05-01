@@ -21,6 +21,7 @@ module tb_LDalu ();
   logic[11:0] expected_R;
 
   task check_outputs();
+    @(negedge tb_clk);
     if(R == expected_R) begin
       $info("Correct R during test case %s", tb_test_case);
     end
