@@ -16,6 +16,7 @@ it is able to encrypt plaintext and then correctly decrypt ciphertext back into 
 Selection of the private and publics keys is possible.
 
 Verilog Files:
+Module files found in source folder, testbenches in testbench folder.
 
 MMult.sv - Mastrovito multiplier, it performs multiplication with modulo reduction mod(X^4 + X + 1) on two 4-bit inputs.
 There is no carry out or in, the output is the 4-bit product of the inputs.
@@ -32,10 +33,14 @@ pointDouble.sv - Takes in one projective coordinate and performs point doubling 
 The input is a three axis' point (three inputs in total) with each axis being 4-bits. The output is a point with three 
 4-bit axis' (three outputs).
 
-LDalu.sv - ALU that allows for selecting between pointDouble and pointADD. Has two 12-bit inputs and a 12-bit output.
-Also has a 2-bit input for choosing which operation should be performed.
+LDalu.sv - ALU that allows for selecting between pointDouble and pointADD. Has two 12-bit inputs and a 12-bit output, such that bits [0:3] represent X, [4:7] represent Y, and [11:8] represent Z.
+Also has a 1-bit input for choosing which operation should be performed, with 0 being add and 1 being double.
 
 tb_LDalu.sv - Testbench for both pointDouble and pointADD.
 
+Other Files:
 
+tb_LDalu.do - Script for running tests in Questa.
+
+Report.pdf - Final report of project.
 
