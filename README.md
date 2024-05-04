@@ -1,6 +1,5 @@
 # ECE_5960_Final_Project
-4-bit Elliptic Curve Hardware Implementation
-Kirra Kotesnburg and Kadon Stimpson
+4-bit Elliptic Curve Hardware Implementation by Kirra Kotesnburg and Kadon Stimpson
 
 This project uses both Singular code and verilog for implementing 4-bit ECC and El Gamal encipherment.
 
