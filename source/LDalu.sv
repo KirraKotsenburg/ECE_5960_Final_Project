@@ -1,6 +1,6 @@
 `timescale 1ps/1ps
 module LDalu (
-  input logic[1:0] op,
+  input logic op,
   input logic[11:0] A, B,
   output logic[11:0] R 
 );
